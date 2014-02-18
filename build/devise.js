@@ -8,58 +8,64 @@
       root.devisejs = factory();
     }
   })(this, (function() {
-    var User, buildRoles, exports, _currentUser, _roles;
+    var User, exports;
     exports = {};
     exports.name = "devisejs";
     exports.version = "0.1.0";
-    _roles = void 0;
-    _currentUser = void 0;
-    buildRoles = function(roles) {
-      var bitMask, intCode, role, userRoles;
-      bitMask = "01";
-      userRoles = {};
-      for (role in roles) {
-        intCode = parseInt(bitMask, 2);
-        userRoles[roles[role]] = {
-          bitMask: intCode,
-          title: roles[role]
-        };
-        bitMask = (intCode << 1).toString(2);
-      }
-      return userRoles;
-    };
     User = (function() {
-      function User(email, rolesMask) {
-        this.email = email;
-        this.rolesMask = rolesMask;
+      function User() {
+        this.rawRoles = [];
+        this.userData = {};
+        this.roles = {};
+        this._isLoggedIn = false;
       }
 
+      User.prototype.buildRoles = function(roles) {
+        var bitMask, intCode, role, userRoles;
+        bitMask = "01";
+        userRoles = {};
+        for (role in roles) {
+          intCode = parseInt(bitMask, 2);
+          userRoles[roles[role]] = {
+            bitMask: intCode,
+            title: roles[role]
+          };
+          bitMask = (intCode << 1).toString(2);
+        }
+        return userRoles;
+      };
+
       User.prototype.isRole = function(role) {
-        var r, roleBitMask, usersRolesMask;
-        r = exports.roles()[role];
+        var r;
+        if (this.roles === void 0) {
+          return false;
+        }
+        r = this.roles[role];
         if (r === void 0) {
           return false;
         }
-        roleBitMask = r.bitMask;
-        usersRolesMask = exports.currentUser().rolesMask;
-        return (roleBitMask & usersRolesMask) === roleBitMask;
+        return (r.bitMask & this.rolesMask) === r.bitMask;
+      };
+
+      User.prototype.isLoggedIn = function() {
+        return this._isLoggedIn;
+      };
+
+      User.prototype.loadUserData = function(userData) {
+        this.email = userData.email;
+        this.rolesMask = userData.roles_mask;
+        return this._isLoggedIn = true;
+      };
+
+      User.prototype.loadRoles = function(rawRoles) {
+        this.rawRoles = rawRoles;
+        return this.roles = this.buildRoles(this.rawRoles);
       };
 
       return User;
 
     })();
-    exports.currentUser = function() {
-      return _currentUser;
-    };
-    exports.roles = function() {
-      return _roles;
-    };
-    exports.loadCurrentUser = function(data) {
-      return _currentUser = new User(data.email, data.roles_mask);
-    };
-    exports.loadRoles = function(roles) {
-      return _roles = buildRoles(roles);
-    };
+    exports.User = User;
     return exports;
   }));
 
