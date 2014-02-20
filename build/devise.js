@@ -52,8 +52,11 @@
       };
 
       User.prototype.loadUserData = function(userData) {
-        this.email = userData.email;
-        this.rolesMask = userData.roles_mask;
+        var k, v;
+        for (k in userData) {
+          v = userData[k];
+          this[k] = v;
+        }
         return this._isLoggedIn = true;
       };
 

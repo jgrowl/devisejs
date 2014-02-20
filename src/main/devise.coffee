@@ -39,8 +39,10 @@
       @_isLoggedIn
 
     loadUserData: (userData) ->
-      @email = userData.email
-      @rolesMask = userData.roles_mask
+#      @email = userData.email
+#      @rolesMask = userData.roles_mask
+      for k,v of userData
+        this[k] = v
       @_isLoggedIn = true
 
     loadRoles: (@rawRoles) ->

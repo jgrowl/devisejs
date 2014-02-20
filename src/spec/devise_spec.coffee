@@ -3,15 +3,15 @@ devise = require '../../build/devise.min'
 
 admin =
   email: "admin@example.com"
-  roles_mask: 1
+  rolesMask: 1
 
 user =
     email: "user@example.com"
-    roles_mask: 2
+    rolesMask: 2
 
 userAndModerator =
   email: "userandmoderator@example.com"
-  roles_mask: 6
+  rolesMask: 6
 
 roles = [
   'admin'
